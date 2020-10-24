@@ -8,7 +8,14 @@ public class EnemyController : MonoBehaviour
     public float horizontalBoundary;
     public float direction;
 
-    // Update is called once per frame
+    private RectTransform enemyRect;
+
+    void Start()
+    {
+        GameController.OrientationChange.AddListener(_OrientationChange);
+        enemyRect = GetComponentInParent<RectTransform>();
+    }
+    
     void Update()
     {
         _Move();
@@ -23,15 +30,19 @@ public class EnemyController : MonoBehaviour
     private void _CheckBounds()
     {
         // check right boundary
-        if (transform.position.x >= horizontalBoundary)
+        if (enemyRect.anchoredPosition.x >= horizontalBoundary)
         {
             direction = -1.0f;
         }
 
         // check left boundary
-        if (transform.position.x <= -horizontalBoundary)
+        if (enemyRect.anchoredPosition.x <= -horizontalBoundary)
         {
             direction = 1.0f;
         }
+    }
+    private void _OrientationChange(ScreenOrientation scrOri)
+    {
+
     }
 }

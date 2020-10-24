@@ -8,11 +8,14 @@ public class BulletController : MonoBehaviour, IApplyDamage
     public float verticalBoundary;
     public BulletManager bulletManager;
     public int damage;
-    
+
+    private RectTransform bulletTransf;
+
     // Start is called before the first frame update
     void Start()
     {
         bulletManager = FindObjectOfType<BulletManager>();
+        bulletTransf = GetComponentInParent<RectTransform>();
     }
 
     // Update is called once per frame
@@ -29,7 +32,7 @@ public class BulletController : MonoBehaviour, IApplyDamage
 
     private void _CheckBounds()
     {
-        if (transform.position.y > verticalBoundary)
+        if (bulletTransf.anchoredPosition.y > verticalBoundary)
         {
             bulletManager.ReturnBullet(gameObject);
         }

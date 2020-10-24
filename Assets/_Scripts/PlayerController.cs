@@ -22,12 +22,16 @@ public class PlayerController : MonoBehaviour
     // Private variables
     private Rigidbody2D m_rigidBody;
     private Vector3 m_touchesEnded;
+    private ScreenOrientation screenOrient;
+    private RectTransform playerRect;
 
     // Start is called before the first frame update
     void Start()
     {
         m_touchesEnded = new Vector3();
         m_rigidBody = GetComponent<Rigidbody2D>();
+        GameController.OrientationChange.AddListener(_OrientationChange);
+        playerRect = GetComponentInParent<RectTransform>();
     }
 
     // Update is called once per frame
@@ -98,18 +102,33 @@ public class PlayerController : MonoBehaviour
     }
 
     private void _CheckBounds()
-    {
+    {        
         // check right bounds
-        if (transform.position.x >= horizontalBoundary)
+        if (playerRect.anchoredPosition.x >= horizontalBoundary)        //if (transform.position.x >= horizontalBoundary)
         {
-            transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(horizontalBoundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
         }
 
         // check left bounds
-        if (transform.position.x <= -horizontalBoundary)
+        if (playerRect.anchoredPosition.x <= -horizontalBoundary)        //if (transform.position.x <= -horizontalBoundary)
         {
-            transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(-horizontalBoundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
         }
 
+    }
+
+    private void _OrientationChange(ScreenOrientation scrOri)
+    {
+        screenOrient = scrOri;
+        if (scrOri == ScreenOrientation.LandscapeLeft)
+        {
+            Debug.Log("LandscapeLeft");            
+            transform.position = new Vector3(Screen.safeArea.xMin + 1, Screen.safeArea.yMin, 0);
+        }
+        if (scrOri == ScreenOrientation.Portrait)
+        {
+            Debug.Log("Portrait");            
+            transform.position = new Vector3(Screen.safeArea.xMin, Screen.safeArea.yMin + 1, 0);
+        }
     }
 }

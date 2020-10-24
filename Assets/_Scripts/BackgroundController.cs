@@ -7,7 +7,15 @@ public class BackgroundController : MonoBehaviour
     public float verticalSpeed;
     public float verticalBoundary;
 
-    // Update is called once per frame
+    void Start()
+    {
+        Rect screenRect = GetComponentInParent<RectTransform>().rect;
+        //Debug.Log(screenRect.width + " " + screenRect.height);
+        //Debug.Log(Screen.width + " " + Screen.height);
+        GameController.OrientationChange.AddListener(_OrientationChange);
+    }
+
+
     void Update()
     {
         _Move();
@@ -16,20 +24,25 @@ public class BackgroundController : MonoBehaviour
 
     private void _Reset()
     {
-        transform.position = new Vector3(0.0f, verticalBoundary);
+        transform.position += new Vector3(0.0f, -verticalBoundary * 4);
     }
 
     private void _Move()
     {
-        transform.position -= new Vector3(0.0f, verticalSpeed) * Time.deltaTime;
+        transform.position -= new Vector3(0.0f, verticalSpeed, 0) * Time.deltaTime;
     }
 
     private void _CheckBounds()
     {
+        //Debug.Log(transform.position.y);
         // if the background is lower than the bottom of the screen then reset
-        if (transform.position.y <= -verticalBoundary)
+        if (transform.position.y <= verticalBoundary)
         {
             _Reset();
         }
+    }
+    private void _OrientationChange(ScreenOrientation scrOri)
+    {
+
     }
 }
