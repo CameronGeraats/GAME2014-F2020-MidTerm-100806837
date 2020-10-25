@@ -4,17 +4,26 @@ using System.ComponentModel;
 using UnityEditor;
 using UnityEngine;
 
+/*
+ * File: PlayerController.cs
+ * Name: Cameron Geraats
+ * ID: 100806837
+ * Last Modified: 24/10/20
+ * Description:
+ *      Manages the player movement, input, bullet firing, and restricts player to screen boundary
+ * Revisions: No previous revisions
+ */
 public class PlayerController : MonoBehaviour
 {
     public BulletManager bulletManager;
 
     [Header("Boundary Check")]
-    public float horizontalBoundary;
+    public float boundary;
 
     [Header("Player Speed")]
-    public float horizontalSpeed;
+    public float speed;
     public float maxSpeed;
-    public float horizontalTValue;
+    public float lerpValue;
 
     [Header("Bullet Firing")]
     public float fireDelay;
@@ -26,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private RectTransform playerRect;
 
     // Start is called before the first frame update
+    // Sets up the private variables and modifies the rotation if the screen is rotated
     void Start()
     {
         m_touchesEnded = new Vector3();
@@ -38,6 +48,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
+    // Runs Movement, Boundary Checking, and Bullet Firing methods per frame
     void Update()
     {
         _Move();
@@ -45,6 +56,7 @@ public class PlayerController : MonoBehaviour
         _FireBullet();
     }
 
+    // Fires a bullet every 60 frames from the Bullet Pool if available
      private void _FireBullet()
     {
         // delay bullet firing 
@@ -54,10 +66,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Handles player input and Moves the player avatar
     private void _Move()
     {
         float direction = 0.0f;
-
+        // Handles portrait mode input
         if (screenOrient == ScreenOrientation.Portrait)
         {
             // touch input support
@@ -96,15 +109,16 @@ public class PlayerController : MonoBehaviour
 
             if (m_touchesEnded.x != 0.0f)
             {
-                transform.position = new Vector2(Mathf.Lerp(transform.position.x, m_touchesEnded.x, horizontalTValue), transform.position.y);
+                transform.position = new Vector2(Mathf.Lerp(transform.position.x, m_touchesEnded.x, lerpValue), transform.position.y);
             }
             else
             {
-                Vector2 newVelocity = m_rigidBody.velocity + new Vector2(direction * horizontalSpeed, 0.0f);
+                Vector2 newVelocity = m_rigidBody.velocity + new Vector2(direction * speed, 0.0f);
                 m_rigidBody.velocity = Vector2.ClampMagnitude(newVelocity, maxSpeed);
                 m_rigidBody.velocity *= 0.99f;
             }
         }
+        // Handles landscape left mode input
         else if (screenOrient == ScreenOrientation.LandscapeLeft)
         {
             // touch input support
@@ -145,40 +159,45 @@ public class PlayerController : MonoBehaviour
             if (m_touchesEnded.y != 0.0f)
             {
                 //Debug.Log(m_touchesEnded.x + " w " + m_touchesEnded.y);
-                transform.position = new Vector2(transform.position.x, Mathf.Lerp(transform.position.y, m_touchesEnded.y, horizontalTValue));
+                transform.position = new Vector2(transform.position.x, Mathf.Lerp(transform.position.y, m_touchesEnded.y, lerpValue));
             }
             else
             {
-                Vector2 newVelocity = m_rigidBody.velocity + new Vector2(0, direction * horizontalSpeed);
+                Vector2 newVelocity = m_rigidBody.velocity + new Vector2(0, direction * speed);
                 m_rigidBody.velocity = Vector2.ClampMagnitude(newVelocity, maxSpeed);
                 m_rigidBody.velocity *= 0.99f;
             }
         }
     }
 
+    // Checks that the player is between the screen boundaries
+    // Portrait orientation checks the X-axis
+    // Landscape orientation checks the Y-axis
     private void _CheckBounds()
     {        
         // check right bounds
-        if (screenOrient == ScreenOrientation.Portrait && playerRect.anchoredPosition.x >= horizontalBoundary)        //if (transform.position.x >= horizontalBoundary)
+        if (screenOrient == ScreenOrientation.Portrait && playerRect.anchoredPosition.x >= boundary)        //if (transform.position.x >= horizontalBoundary)
         {
-            playerRect.anchoredPosition = new Vector2(horizontalBoundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(boundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
         }
-        if (screenOrient == ScreenOrientation.LandscapeLeft && playerRect.anchoredPosition.y >= horizontalBoundary)        //if (transform.position.x >= horizontalBoundary)
+        if (screenOrient == ScreenOrientation.LandscapeLeft && playerRect.anchoredPosition.y >= boundary)        //if (transform.position.x >= horizontalBoundary)
         {
-            playerRect.anchoredPosition = new Vector2(playerRect.anchoredPosition.x, horizontalBoundary);            //transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(playerRect.anchoredPosition.x, boundary);            //transform.position = new Vector3(horizontalBoundary, transform.position.y, 0.0f);
         }
         // check left bounds
-        if (screenOrient == ScreenOrientation.Portrait && playerRect.anchoredPosition.x <= -horizontalBoundary)        //if (transform.position.x <= -horizontalBoundary)
+        if (screenOrient == ScreenOrientation.Portrait && playerRect.anchoredPosition.x <= -boundary)        //if (transform.position.x <= -horizontalBoundary)
         {
-            playerRect.anchoredPosition = new Vector2(-horizontalBoundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(-boundary, playerRect.anchoredPosition.y);            //transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
         }
-        if (screenOrient == ScreenOrientation.LandscapeLeft && playerRect.anchoredPosition.y <= -horizontalBoundary)        //if (transform.position.x <= -horizontalBoundary)
+        if (screenOrient == ScreenOrientation.LandscapeLeft && playerRect.anchoredPosition.y <= -boundary)        //if (transform.position.x <= -horizontalBoundary)
         {
-            playerRect.anchoredPosition = new Vector2(playerRect.anchoredPosition.x, -horizontalBoundary);              //transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
+            playerRect.anchoredPosition = new Vector2(playerRect.anchoredPosition.x, -boundary);              //transform.position = new Vector3(-horizontalBoundary, transform.position.y, 0.0f);
         }
 
     }
 
+    // When the Orientation is changed, this method re-orients the player to the new coordinates and rotation
+    // This class has a listener to the GameController event which gets invoked
     private void _OrientationChange(ScreenOrientation scrOri)
     {
         screenOrient = scrOri;

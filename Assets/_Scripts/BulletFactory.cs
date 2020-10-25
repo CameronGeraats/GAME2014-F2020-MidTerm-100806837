@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File: BulletFactory.cs
+ * Name: Cameron Geraats
+ * ID: 100806837
+ * Last Modified: 24/10/20
+ * Description:
+ *      Manages the bullet creation
+ * Revisions: No previous revisions
+ */
 [System.Serializable]
 public class BulletFactory : MonoBehaviour
 {
