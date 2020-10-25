@@ -35,7 +35,8 @@ public class BulletFactory : MonoBehaviour
                 break;
         }
 
-        tempBullet.transform.parent = transform;
+        //tempBullet.transform.parent = transform;
+        tempBullet.transform.SetParent(transform);
         tempBullet.SetActive(false);
 
         return tempBullet;

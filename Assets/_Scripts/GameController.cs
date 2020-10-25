@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
         Debug.Log(Screen.safeArea);
 
         // Adjusts the camera size to reflect the current device screen size
-        Camera.main.orthographicSize = Mathf.Max(Screen.width, Screen.height) / 2;
+        Camera.main.orthographicSize = Screen.height / 2;
     }
 
     // Update is called once per frame
@@ -26,6 +26,7 @@ public class GameController : MonoBehaviour
             screenOrient = Screen.orientation;
             OrientationChange.Invoke(Screen.orientation);
             Debug.Log("Update Orient: " + Screen.orientation);
+            Camera.main.orthographicSize = Screen.height / 2;
         }
     }
 }
